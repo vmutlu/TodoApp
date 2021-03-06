@@ -1,9 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Core.Aspects.Autofac.Caching;
+using ToDo.Core.Aspects.Autofac.Logging;
+using ToDo.Core.Aspects.Autofac.Transaction;
+using ToDo.Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 using ToDo.Entities.Concrate;
@@ -43,6 +45,7 @@ namespace ToDo.Business.Concrete
         }
 
         [CacheAspect]
+        [LogAspect(typeof(FileLogger))]
         public async Task<IDataResult<Category>> GetByIdAsync(int categoryId)
         {
             return new SuccessDataResult<Category>(await _categoryDal.GetAsync(c => c.CategoryId == categoryId));
@@ -50,6 +53,7 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ICategoryService.Get")]
+        [TransactionScopeAspect]
         public async Task<IResult> UpdateAsync(Category category)
         {
             var updatedCategory = await _categoryDal.GetAsync(i=>i.CategoryId == category.CategoryId);
