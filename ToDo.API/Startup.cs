@@ -7,15 +7,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
-using ToDo.Business.Abstract;
-using ToDo.Business.Concrete;
 using ToDo.Core.DependencyResolvers;
 using ToDo.Core.Extensions;
 using ToDo.Core.Utilities.IoC;
 using ToDo.Core.Utilities.Security.Encryption;
 using ToDo.Core.Utilities.Security.JWT;
-using ToDo.DataAccess.Abstract;
-using ToDo.DataAccess.Concrete.EntityFramework;
 
 namespace ToDo.API
 {
