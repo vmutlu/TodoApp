@@ -4,6 +4,7 @@ using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
+using ToDo.Core.Aspects.Autofac.Performance;
 using ToDo.Core.Aspects.Autofac.Transaction;
 using ToDo.Core.Aspects.Autofac.Validation;
 using ToDo.Core.Utilities.Results;
@@ -36,7 +37,7 @@ namespace ToDo.Business.Concrete
             var deleted = await _todoDal.GetAsync(i=>i.Id == id);
             await _todoDal.DeleteAsync(deleted);
 
-            return new Result(success: true, message: "TODO Başarıyla Eklenmiştir."); ;
+            return new Result(success: true, message: "TODO Başarıyla Silinmiştir."); ;
         }
 
         [SecuredOperation("admin,user")]
@@ -55,14 +56,15 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ITodoService.Get")]
-        [ValidationAspect(typeof(TodoValidator))]
-        [TransactionScopeAspect]
         public async Task<IResult> UpdateAsync(Todo todo)
         {
             var updatedTodo = await _todoDal.GetAsync(i=>i.Id == todo.Id);
 
             updatedTodo.Content = todo.Content;
+
+            if(todo.CategoryId != 0)
             updatedTodo.CategoryId = todo.CategoryId;
+
             updatedTodo.DueDate = todo.DueDate;
             updatedTodo.IsFavorite = todo.IsFavorite;
 

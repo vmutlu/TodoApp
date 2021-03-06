@@ -8,7 +8,7 @@ namespace ToDo.Business.ValidationRules.FluentValidation
         public CategoryValidator()
         {
             RuleFor(c => c.Name).NotEmpty().WithMessage("Kategori Adı boş geçilemez");
-            RuleFor(t => t.Name).Length(5, 50).WithMessage("Kategori Adı en az 5 karakter en fazla 50 karakter olabilir.");
+            RuleFor(t => t.Name).Length(3, 50).WithMessage("Kategori Adı en az 3 karakter en fazla 50 karakter olabilir.");
         }
     }
 }

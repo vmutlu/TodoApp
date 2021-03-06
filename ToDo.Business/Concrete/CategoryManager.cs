@@ -27,7 +27,7 @@ namespace ToDo.Business.Concrete
         {
             await _categoryDal.AddAsync(category);
 
-            return new Result(success: true, message: "Ürün Başarıyla Eklenmiştir.");
+            return new Result(success: true, message: "Kategori Başarıyla Eklenmiştir.");
         }
 
         [SecuredOperation("admin")]
@@ -36,7 +36,7 @@ namespace ToDo.Business.Concrete
             var deleted = await _categoryDal.GetAsync(i=>i.CategoryId == id);
             await _categoryDal.DeleteAsync(deleted);
 
-            return new Result(success: true, message: "Ürün Başarıyla Eklenmiştir.");
+            return new Result(success: true, message: "Kategori Başarıyla Silinmiştir.");
         }
 
         [SecuredOperation("admin,user")]
@@ -64,7 +64,7 @@ namespace ToDo.Business.Concrete
             updatedCategory.Name = category.Name;
             await _categoryDal.UpdateAsync(updatedCategory);
 
-            return new Result(success: true, message: "Ürün Başarıyla Eklenmiştir.");
+            return new Result(success: true, message: "Kategori Başarıyla Güncellenmiştir.");
         }
     }
 }
