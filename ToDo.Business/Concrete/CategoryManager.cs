@@ -2,10 +2,10 @@
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
+using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
-using ToDo.Core.Aspects.Autofac.Logging;
 using ToDo.Core.Aspects.Autofac.Transaction;
-using ToDo.Core.CrossCuttingConcerns.Logging.Log4Net.Loggers;
+using ToDo.Core.Aspects.Autofac.Validation;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 using ToDo.Entities.Concrate;
@@ -22,6 +22,7 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ICategoryService.Get")]
+        [ValidationAspect(typeof(CategoryValidator))]
         public async Task<IResult> AddAsync(Category category)
         {
             await _categoryDal.AddAsync(category);
@@ -38,14 +39,15 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: "Ürün Başarıyla Eklenmiştir.");
         }
 
+        [SecuredOperation("admin,user")]
         [CacheAspect]
         public async Task<IDataResult<List<Category>>> GetAllAsync()
         {
             return new SuccessDataResult<List<Category>>(await _categoryDal.GetAllAsync());
         }
 
+        [SecuredOperation("admin,user")]
         [CacheAspect]
-        [LogAspect(typeof(FileLogger))]
         public async Task<IDataResult<Category>> GetByIdAsync(int categoryId)
         {
             return new SuccessDataResult<Category>(await _categoryDal.GetAsync(c => c.CategoryId == categoryId));
@@ -53,6 +55,7 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ICategoryService.Get")]
+        [ValidationAspect(typeof(CategoryValidator))]
         [TransactionScopeAspect]
         public async Task<IResult> UpdateAsync(Category category)
         {

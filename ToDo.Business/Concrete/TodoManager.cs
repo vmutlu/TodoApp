@@ -2,7 +2,10 @@
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
+using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
+using ToDo.Core.Aspects.Autofac.Transaction;
+using ToDo.Core.Aspects.Autofac.Validation;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 using ToDo.Entities.Concrate;
@@ -18,6 +21,8 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("ITodoService.Get")]
+        [ValidationAspect(typeof(TodoValidator))]
         public async Task<IResult> AddAsync(Todo tEntity)
         {
             await _todoDal.AddAsync(tEntity);
@@ -34,12 +39,14 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: "TODO Başarıyla Eklenmiştir."); ;
         }
 
+        [SecuredOperation("admin,user")]
         [CacheAspect]
         public async Task<IDataResult<List<Todo>>> GetAllAsync()
         {
             return new SuccessDataResult<List<Todo>>(await _todoDal.GetAllAsync());
         }
 
+        [SecuredOperation("admin,user")]
         [CacheAspect]
         public async Task<IDataResult<Todo>> GetByIdAsync(int id)
         {
@@ -47,6 +54,9 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("ITodoService.Get")]
+        [ValidationAspect(typeof(TodoValidator))]
+        [TransactionScopeAspect]
         public async Task<IResult> UpdateAsync(Todo todo)
         {
             var updatedTodo = await _todoDal.GetAsync(i=>i.Id == todo.Id);
