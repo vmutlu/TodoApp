@@ -32,6 +32,7 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin")]
+        [CacheRemoveAspect("ITodoService.Get")]
         public async Task<IResult> DeleteAsync(int id)
         {
             var deleted = await _todoDal.GetAsync(i=>i.Id == id);

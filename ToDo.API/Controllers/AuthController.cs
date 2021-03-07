@@ -20,7 +20,7 @@ namespace ToDo.API.Controllers
         public async Task<ActionResult> Login(UserForLoginDto userForLoginDto)
         {
             var userToLogin =  await _authService.LoginAsync(userForLoginDto);
-            if (!userToLogin.Success)
+           if (!userToLogin.Success)
             {
                 return BadRequest(userToLogin.Message);
             }

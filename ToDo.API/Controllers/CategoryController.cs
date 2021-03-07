@@ -45,7 +45,7 @@ namespace ToDo.API.Controllers
             return Ok(response);
         }
 
-        [HttpPost("delete/{id}")]
+        [HttpDelete("delete/{id}")]
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _categoryService.DeleteAsync(id);

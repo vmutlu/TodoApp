@@ -47,6 +47,12 @@ namespace ToDo.API
                     };
                 });
             services.AddDependencyResolvers(new ICoreModule[] { new CoreModule() });
+
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowOrigin", builder => builder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+            });
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ToDo.API", Version = "v1" });
@@ -65,6 +71,8 @@ namespace ToDo.API
             app.UseHttpsRedirection();
 
             app.UseRouting();
+
+            app.UseCors("AllowOrigin");
 
             app.UseAuthentication();
 
