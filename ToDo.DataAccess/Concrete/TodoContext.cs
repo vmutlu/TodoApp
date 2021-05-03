@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System.IO;
 using ToDo.Core.Entities.Concrete;
 using ToDo.DataAccess.Concrete.EntityFramework.Configurations;
 using ToDo.Entities.Concrate;
@@ -9,7 +11,9 @@ namespace ToDo.DataAccess.Concrete
     {
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Server=DESKTOP-KB74JGP\\SQLEXPRESS;Database=TodoDB;Integrated Security=true;");
+            var Configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();
+
+            optionsBuilder.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"));
         }
         public DbSet<Category> Categories { get; set; }
         public DbSet<Todo> Todos { get; set; }
