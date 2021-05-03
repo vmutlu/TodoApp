@@ -6,5 +6,8 @@
 
         public static string InvalidTodoId = "Geçersiz Id degeri";
         public static string InvalidTodo = "Geçersiz Id";
+
+        public static string InvalidCategoryId = "Geçersiz Kategori Id degeri";
+        public static string InvalidCategory = "Geçersiz Kategori Id";
     }
 }
