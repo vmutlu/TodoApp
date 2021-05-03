@@ -34,7 +34,7 @@ namespace ToDo.Business.Concrete
         [CacheRemoveAspect("ICategoryService.Get")]
         public async Task<IResult> DeleteAsync(int id)
         {
-            var deleted = await _categoryDal.GetAsync(i=>i.CategoryId == id);
+            var deleted = await _categoryDal.GetAsync(i => i.CategoryId == id);
             await _categoryDal.DeleteAsync(deleted);
 
             return new Result(success: true, message: "Kategori Başarıyla Silinmiştir.");
@@ -44,7 +44,7 @@ namespace ToDo.Business.Concrete
         [CacheAspect]
         public async Task<IDataResult<List<Category>>> GetAllAsync()
         {
-            return new SuccessDataResult<List<Category>>(await _categoryDal.GetAllAsync());
+            return new SuccessDataResult<List<Category>>(await _categoryDal.GetAllAsync(null, c => c.Todos));
         }
 
         [SecuredOperation("admin,user")]
@@ -60,7 +60,7 @@ namespace ToDo.Business.Concrete
         [TransactionScopeAspect]
         public async Task<IResult> UpdateAsync(Category category)
         {
-            var updatedCategory = await _categoryDal.GetAsync(i=>i.CategoryId == category.CategoryId);
+            var updatedCategory = await _categoryDal.GetAsync(i => i.CategoryId == category.CategoryId);
 
             updatedCategory.Name = category.Name;
             await _categoryDal.UpdateAsync(updatedCategory);
