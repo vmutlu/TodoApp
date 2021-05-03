@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using ToDo.Core.Entities;
+using ToDo.Core.Utilities.Linq;
 
 namespace ToDo.Core.DataAccess.EntityFramework
 {
@@ -28,7 +29,7 @@ namespace ToDo.Core.DataAccess.EntityFramework
             }
         }
 
-        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null)
+        public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null, params Expression<Func<TEntity, object>>[] includeEntities)
         {
             using (TContext context = new TContext())
             {
@@ -37,12 +38,15 @@ namespace ToDo.Core.DataAccess.EntityFramework
 
                 if (filter != null)
                     query = query.Where(filter);
+
+                if (includeEntities.Length > 0)
+                    query = query.IncludeMultiple(includeEntities);
 
                 return await query.ToListAsync();
             }
         }
 
-        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter)
+        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter, params Expression<Func<TEntity, object>>[] includeEntities)
         {
             using (TContext context = new TContext())
             {
@@ -50,6 +54,8 @@ namespace ToDo.Core.DataAccess.EntityFramework
 
                 if (filter != null)
                     query = query.Where(filter);
+                if (includeEntities.Length > 0)
+                    query = query.IncludeMultiple(includeEntities);
 
                 return await query.SingleOrDefaultAsync();
             }
