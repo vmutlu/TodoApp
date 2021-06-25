@@ -11,25 +11,18 @@ namespace ToDo.API.Controllers
     {
         private readonly IAuthService _authService;
 
-        public AuthController(IAuthService authService)
-        {
-            _authService = authService;
-        }
+        public AuthController(IAuthService authService) => _authService = authService;
 
         [HttpPost("login")]
         public async Task<ActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            var userToLogin =  await _authService.LoginAsync(userForLoginDto);
-           if (!userToLogin.Success)
-            {
+            var userToLogin = await _authService.LoginAsync(userForLoginDto);
+            if (!userToLogin.Success)
                 return BadRequest(userToLogin.Message);
-            }
 
             var result = await _authService.CreateAccessTokenAsync(userToLogin.Data);
             if (result.Success)
-            {
                 return Ok(result.Data);
-            }
 
             return BadRequest(result.Message);
         }
@@ -39,16 +32,13 @@ namespace ToDo.API.Controllers
         {
             var userExists = await _authService.UserExistsAsync(userForRegisterDto.Email);
             if (!userExists.Success)
-            {
                 return BadRequest(userExists.Message);
-            }
 
             var registerResult = await _authService.RegisterAsync(userForRegisterDto, userForRegisterDto.Password);
             var result = await _authService.CreateAccessTokenAsync(registerResult.Data);
+
             if (result.Success)
-            {
                 return Ok(result.Data);
-            }
 
             return BadRequest(result.Message);
         }

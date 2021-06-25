@@ -12,44 +12,21 @@ namespace ToDo.API.Controllers
     public class CategoryController : ControllerBase
     {
         private readonly ICategoryService _categoryService;
-        public CategoryController(ICategoryService categoryService)
-        {
-            _categoryService = categoryService;
-        }
+        public CategoryController(ICategoryService categoryService) => _categoryService = categoryService;
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll()
-        {
-            var response = await _categoryService.GetAllAsync();
-            return Ok(response);
-        }
+        public async Task<IActionResult> GetAll() => Ok(await _categoryService.GetAllAsync());
 
         [HttpGet("getById/{id}")]
-        public async Task<IActionResult> GetById(int id)
-        {
-            var response = await _categoryService.GetByIdAsync(id);
-            return Ok(response);
-        }
+        public async Task<IActionResult> GetById(int id) => Ok(await _categoryService.GetByIdAsync(id));
 
         [HttpPost("add")]
-        public async Task<IActionResult> Add(Category category)
-        {
-            var response = await _categoryService.AddAsync(category);
-            return Ok(response);
-        }
+        public async Task<IActionResult> Add(Category category) => Ok(await _categoryService.AddAsync(category));
 
         [HttpPut("update")]
-        public async Task<IActionResult> Update(Category category)
-        {
-            var response = await _categoryService.UpdateAsync(category);
-            return Ok(response);
-        }
+        public async Task<IActionResult> Update(Category category) => Ok(await _categoryService.UpdateAsync(category));
 
         [HttpDelete("delete/{id}")]
-        public async Task<IActionResult> Delete(int id)
-        {
-            var response = await _categoryService.DeleteAsync(id);
-            return Ok(response);
-        }
+        public async Task<IActionResult> Delete(int id) => Ok(await _categoryService.DeleteAsync(id));
     }
 }
