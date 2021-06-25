@@ -10,10 +10,7 @@ namespace ToDo.Core.Extensions
     public class ExceptionMiddleware
     {
         public RequestDelegate _requestDelegate;
-        public ExceptionMiddleware(RequestDelegate requestDelegate)
-        {
-            _requestDelegate = requestDelegate;
-        }
+        public ExceptionMiddleware(RequestDelegate requestDelegate) => _requestDelegate = requestDelegate;
 
         public async Task InvokeAsync(HttpContext httpContext)
         {

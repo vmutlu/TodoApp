@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Core.Entities.Concrete;
+using ToDo.Core.Enums;
 using ToDo.Core.Utilities.Results;
 using ToDo.Core.Utilities.Security.Hashing;
 using ToDo.Core.Utilities.Security.JWT;
@@ -12,11 +13,13 @@ namespace ToDo.Business.Concrete
     {
         private IUserService _userService;
         private ITokenHelper _tokenHelper;
+        private IUserOperationClaimService _userOperationClaim;
 
-        public AuthManager(IUserService userService, ITokenHelper tokenHelper)
+        public AuthManager(IUserService userService, ITokenHelper tokenHelper, IUserOperationClaimService userOperationClaim)
         {
             _userService = userService;
             _tokenHelper = tokenHelper;
+            _userOperationClaim = userOperationClaim;
         }
 
         public async Task<IDataResult<User>> RegisterAsync(UserForRegisterDto userForRegisterDto, string password)
@@ -33,6 +36,12 @@ namespace ToDo.Business.Concrete
                 Status = true
             };
             await _userService.AddAsync(user);
+
+            await _userOperationClaim.AddAsync(new UserOperationClaim()
+            {
+                UserId = user.Id,
+                OperationClaimId = (int)EOperationsClaims.user // register olan user'a default user yetkisinin verilmesi
+            });
             return new SuccessDataResult<User>(user, "Kayıt oldu");
         }
 

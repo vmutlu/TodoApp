@@ -11,18 +11,21 @@ using ToDo.DataAccess.Concrete.EntityFramework;
 
 namespace ToDo.Business.DependencyResolvers.Autofac
 {
-    public class AutofacBusinessModule: Module
+    public class AutofacBusinessModule : Module
     {
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<EfTodoDal>().As<ITodoDal>().SingleInstance();
-            builder.RegisterType<TodoManager>().As<ITodoService>().SingleInstance();
+            builder.RegisterType<EfTodoDal>().As<ITodoDal>();
+            builder.RegisterType<TodoManager>().As<ITodoService>();
 
-            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>().SingleInstance();
-            builder.RegisterType<CategoryManager>().As<ICategoryService>().SingleInstance();
+            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>();
+            builder.RegisterType<CategoryManager>().As<ICategoryService>();
 
             builder.RegisterType<EfUserDal>().As<IUserDal>();
             builder.RegisterType<UserManager>().As<IUserService>();
+
+            builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>();
+            builder.RegisterType<UserOperationClaimManager>().As<IUserOperationClaimService>();
 
             builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();

@@ -27,9 +27,7 @@ namespace ToDo.Business.BusinessAspects.Autofac
             foreach (var role in _roles)
             {
                 if (roleClaims.Contains(role))
-                {
                     return;
-                }
             }
             throw new Exception(Messages.AuthorizationDenied);
         }

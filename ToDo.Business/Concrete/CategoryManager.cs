@@ -44,7 +44,7 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin,user")]
-        [CacheAspect]
+       // [CacheAspect]
         public async Task<IDataResult<List<Category>>> GetAllAsync()
         {
             var categories = (from category in await _categoryDal.GetAllAsync(null, t => t.Todos).ConfigureAwait(false)
