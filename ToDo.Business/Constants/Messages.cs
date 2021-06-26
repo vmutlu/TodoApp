@@ -9,5 +9,16 @@
 
         public static string InvalidCategoryId = "Geçersiz Kategori Id degeri";
         public static string InvalidCategory = "Geçersiz Kategori Id";
+
+        public static string InvalidOperationClaimId = "Geçersiz Yetki Id degeri";
+        public static string InvalidOperationClaim = "Geçersiz Yetki Id";
+
+        public static string SuccessUserOperationAdded = "Kullanıcı Yetki Tanımlaması Başarılı";
+        public static string SuccessUserOperationDeleted = "Kullanıcı Yetki Kaldırma Başarılı ";
+        public static string SuccessUserOperationUpdated = "Kullanıcı Yetki Güncelleme Başarılı ";
+
+        public static string SuccessOperationAdded = "Yetki Tanımlaması Başarılı";
+        public static string SuccessOperationDeleted = "Yetki Kaldırma Başarılı ";
+        public static string SuccessOperationUpdated = "Yetki Güncelleme Başarılı ";
     }
 }

@@ -43,16 +43,15 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: "Kategori Başarıyla Silinmiştir.");
         }
 
-        [SecuredOperation("admin,user")]
-       // [CacheAspect]
+       
         public async Task<IDataResult<List<Category>>> GetAllAsync()
         {
-            var categories = (from category in await _categoryDal.GetAllAsync(null, t => t.Todos).ConfigureAwait(false)
-                              select new Category()
-                              {
-                                  CategoryId = category.CategoryId,
-                                  Name = category.Name,
-                                  Todos = category.Todos != null ? new List<Todo>()
+            var response = (from category in await _categoryDal.GetAllAsync(null, c => c.Todos).ConfigureAwait(false)
+                            select new Category()
+                            {
+                                CategoryId = category.CategoryId,
+                                Name = category.Name,
+                                Todos = category.Todos != null ? new List<Todo>()
                                   {
                                       new Todo()
                                       {
@@ -64,8 +63,8 @@ namespace ToDo.Business.Concrete
                                          ReminMeDate = category.Todos.GetListMapped(ct=>ct.ReminMeDate),
                                       }
                                   } : null
-                              }).ToList();
-            return new SuccessDataResult<List<Category>>(categories);
+                            });
+            return new SuccessDataResult<List<Category>>(response.ToList());
         }
 
         [SecuredOperation("admin,user")]

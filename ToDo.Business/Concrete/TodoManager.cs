@@ -45,23 +45,22 @@ namespace ToDo.Business.Concrete
         [CacheAspect]
         public async Task<IDataResult<List<Todo>>> GetAllAsync()
         {
-            var todos = (from todo in await _todoDal.GetAllAsync(null, t => t.Category).ConfigureAwait(false)
-                         select new Todo()
-                         {
-                             CategoryId = todo.CategoryId,
-                             Content = todo.Content,
-                             DueDate = todo.DueDate,
-                             Id = todo.Id,
-                             IsFavorite = todo.IsFavorite,
-                             ReminMeDate = todo.ReminMeDate,
-                             Category = todo.Category != null ? new Category()
-                             {
-                                 CategoryId = todo.Category.CategoryId,
-                                 Name = todo.Category.Name
-                             } : null
-                         }).ToList();
-
-            return new SuccessDataResult<List<Todo>>(todos);
+            var response = (from todo in await _todoDal.GetAllAsync(null, p => p.Category).ConfigureAwait(false)
+                            select new Todo()
+                            {
+                                CategoryId = todo.CategoryId,
+                                Content = todo.Content,
+                                DueDate = todo.DueDate,
+                                Id = todo.Id,
+                                IsFavorite = todo.IsFavorite,
+                                ReminMeDate = todo.ReminMeDate,
+                                Category = todo.Category != null ? new Category()
+                                {
+                                    CategoryId = todo.Category.CategoryId,
+                                    Name = todo.Category.Name
+                                } : null
+                            }).ToList();
+            return new SuccessDataResult<List<Todo>>(response);
         }
 
         [SecuredOperation("admin,user")]

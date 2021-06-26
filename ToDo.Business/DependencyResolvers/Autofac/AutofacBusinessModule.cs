@@ -27,6 +27,9 @@ namespace ToDo.Business.DependencyResolvers.Autofac
             builder.RegisterType<EfUserOperationClaimDal>().As<IUserOperationClaimDal>();
             builder.RegisterType<UserOperationClaimManager>().As<IUserOperationClaimService>();
 
+            builder.RegisterType<EfOperationClaimDal>().As<IOperationClaimDal>();
+            builder.RegisterType<OperationClaimManager>().As<IOperationClaimService>();
+
             builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
 
