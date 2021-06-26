@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace ToDo.DataAccess.Migrations
 {
-    public partial class TodoMigration : Migration
+    public partial class update_database : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

@@ -10,8 +10,8 @@ using ToDo.DataAccess.Concrete;
 namespace ToDo.DataAccess.Migrations
 {
     [DbContext(typeof(TodoContext))]
-    [Migration("20210228112746_TodoMigration")]
-    partial class TodoMigration
+    [Migration("20210626104053_update_database")]
+    partial class update_database
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

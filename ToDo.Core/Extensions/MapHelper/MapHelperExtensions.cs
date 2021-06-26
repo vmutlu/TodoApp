@@ -12,9 +12,11 @@ namespace ToDo.Core.Extensions.MapHelper
         {
             dynamic propertyName = default;
             if (mapped.IsNullOrEmpty()) return "";
-            var columnNames = columnName.GetPropertyName();
-            propertyName = mapped.Any()
-                            ? mapped.FirstOrDefault().GetType().GetProperty(columnNames).GetValue(mapped.FirstOrDefault()) : default;
+            var columnNames = columnName != null ? columnName.GetPropertyName() : null;
+
+            if (columnNames != null)
+                propertyName = mapped.Any()
+                                ? mapped.FirstOrDefault().GetType().GetProperty(columnNames).GetValue(mapped.FirstOrDefault()) : default;
             return propertyName;
         }
 

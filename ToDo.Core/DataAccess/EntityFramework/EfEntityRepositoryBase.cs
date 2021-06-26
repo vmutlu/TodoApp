@@ -31,9 +31,8 @@ namespace ToDo.Core.DataAccess.EntityFramework
 
         public async Task<List<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> filter = null, params Expression<Func<TEntity, object>>[] includeEntities)
         {
-            using (TContext context = new TContext())
+            using (var context = new TContext())
             {
-
                 IQueryable<TEntity> query = context.Set<TEntity>();
 
                 if (filter != null)
