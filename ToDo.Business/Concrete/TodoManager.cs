@@ -16,10 +16,7 @@ namespace ToDo.Business.Concrete
     public class TodoManager : ITodoService
     {
         private readonly ITodoDal _todoDal;
-        public TodoManager(ITodoDal todoDal)
-        {
-            _todoDal = todoDal;
-        }
+        public TodoManager(ITodoDal todoDal) => _todoDal = todoDal;
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ITodoService.Get")]
@@ -72,7 +69,7 @@ namespace ToDo.Business.Concrete
 
             var todoObject = await _todoDal.GetAsync(c => c.Id == id, t => t.Category).ConfigureAwait(false);
 
-            if(todoObject is null)
+            if (todoObject is null)
                 return new ErrorDataResult<Todo>(null, Messages.InvalidTodo);
 
             Todo todo = new Todo()
@@ -87,7 +84,7 @@ namespace ToDo.Business.Concrete
                 {
                     CategoryId = todoObject.Category.CategoryId,
                     Name = todoObject.Category.Name
-                }:null
+                } : null
             };
 
             return new SuccessDataResult<Todo>(todo);

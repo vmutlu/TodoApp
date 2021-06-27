@@ -12,25 +12,13 @@ namespace ToDo.Business.Concrete
     {
         private readonly IUserDal _userDal;
 
-        public UserManager(IUserDal userDal)
-        {
-            _userDal = userDal;
-        }
+        public UserManager(IUserDal userDal) => _userDal = userDal;
 
-        public async Task<List<OperationClaim>> GetClaimsAsync(User user)
-        {
-            return await _userDal.GetClaimsAsync(user);
-        }
+        public async Task<List<OperationClaim>> GetClaimsAsync(User user) => await _userDal.GetClaimsAsync(user);
 
-        public async Task AddAsync(User user)
-        {
-            await _userDal.AddAsync(user);
-        }
+        public async Task AddAsync(User user) => await _userDal.AddAsync(user);
 
-        public async Task<User> GetByMailAsync(string email)
-        {
-            return await _userDal.GetAsync(u => u.Email == email);
-        }
+        public async Task<User> GetByMailAsync(string email) => await _userDal.GetAsync(u => u.Email == email);
 
         public async Task<List<User>> GetUsersAsync()
         {

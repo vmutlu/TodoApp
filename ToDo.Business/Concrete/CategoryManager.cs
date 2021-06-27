@@ -18,10 +18,7 @@ namespace ToDo.Business.Concrete
     public class CategoryManager : ICategoryService
     {
         private readonly ICategoryDal _categoryDal;
-        public CategoryManager(ICategoryDal categoryDal)
-        {
-            _categoryDal = categoryDal;
-        }
+        public CategoryManager(ICategoryDal categoryDal) => _categoryDal = categoryDal;
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ICategoryService.Get")]
@@ -43,7 +40,8 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: "Kategori Başarıyla Silinmiştir.");
         }
 
-       
+        [SecuredOperation("admin,user")]
+        [CacheAspect]
         public async Task<IDataResult<List<Category>>> GetAllAsync()
         {
             var response = (from category in await _categoryDal.GetAllAsync(null, c => c.Todos).ConfigureAwait(false)

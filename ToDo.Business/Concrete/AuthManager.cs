@@ -49,14 +49,10 @@ namespace ToDo.Business.Concrete
         {
             var userToCheck = await _userService.GetByMailAsync(userForLoginDto.Email);
             if (userToCheck == null)
-            {
                 return new ErrorDataResult<User>("Kullanıcı bulunamadı");
-            }
 
             if (!HashingHelper.VerifyPasswordHash(userForLoginDto.Password, userToCheck.PasswordHash, userToCheck.PasswordSalt))
-            {
                 return new ErrorDataResult<User>("Parola hatası");
-            }
 
             return new SuccessDataResult<User>(userToCheck, "Başarılı giriş");
         }
@@ -64,9 +60,8 @@ namespace ToDo.Business.Concrete
         public async Task<IResult> UserExistsAsync(string email)
         {
             if (await _userService.GetByMailAsync(email) != null)
-            {
                 return new ErrorResult("Kullanıcı mevcut");
-            }
+
             return new SuccessResult();
         }
 
