@@ -2,6 +2,7 @@
 using System.Linq;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
+using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Business.Constants;
 using ToDo.Core.Entities.Concrete;
 using ToDo.Core.Utilities.Results;
@@ -21,6 +22,7 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: Messages.SuccessUserOperationAdded);
         }
 
+        [SecuredOperation("admin")]
         public async Task<IResult> DeleteAsync(int id)
         {
             var deleting = await _userOperationClaimDal.GetAsync(uo => uo.Id == id).ConfigureAwait(false);
@@ -31,6 +33,7 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: Messages.SuccessUserOperationDeleted);
         }
 
+        [SecuredOperation("admin")]
         public async Task<IDataResult<List<UserOperationClaim>>> GetAllAsync()
         {
             var response = (from uoc in await _userOperationClaimDal.GetAllAsync(null, o => o.User, o => o.OperationClaim).ConfigureAwait(false)
@@ -55,6 +58,7 @@ namespace ToDo.Business.Concrete
             return new SuccessDataResult<List<UserOperationClaim>>(response);
         }
 
+        [SecuredOperation("admin")]
         public async Task<IDataResult<UserOperationClaim>> GetByIdAsync(int id)
         {
             if (id <= 0)
@@ -86,6 +90,7 @@ namespace ToDo.Business.Concrete
             return new SuccessDataResult<UserOperationClaim>(operation);
         }
 
+        [SecuredOperation("admin")]
         public async Task<IResult> UpdateAsync(UserOperationClaim operation)
         {
             await _userOperationClaimDal.UpdateAsync(operation).ConfigureAwait(false);
