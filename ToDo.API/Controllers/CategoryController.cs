@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
+using ToDo.Core.Utilities.Results;
 using ToDo.Entities.Concrate;
 
 namespace ToDo.API.Controllers
@@ -15,7 +16,7 @@ namespace ToDo.API.Controllers
         public CategoryController(ICategoryService categoryService) => _categoryService = categoryService;
 
         [HttpGet("getAll")]
-        public async Task<IActionResult> GetAll() => Ok(await _categoryService.GetAllAsync());
+        public async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery) => Ok(await _categoryService.GetAllAsync(paginationQuery));
 
         [HttpGet("getById/{id}")]
         public async Task<IActionResult> GetById(int id) => Ok(await _categoryService.GetByIdAsync(id));
