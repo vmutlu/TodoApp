@@ -9,6 +9,11 @@ namespace ToDo.DataAccess.Concrete.EntityFramework
 {
     public class EfUserDal : EfEntityRepositoryBase<User, TodoContext>, IUserDal
     {
+        public EfUserDal(TodoContext todoContext) : base(todoContext)
+        {
+
+        }
+
         public Task<List<OperationClaim>> GetClaimsAsync(User user)
         {
             using (var context = new TodoContext())

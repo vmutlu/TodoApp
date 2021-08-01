@@ -6,5 +6,9 @@ namespace ToDo.DataAccess.Concrete.EntityFramework
 {
     public class EfUserOperationClaimDal : EfEntityRepositoryBase<UserOperationClaim, TodoContext>, IUserOperationClaimDal
     {
+        public EfUserOperationClaimDal(TodoContext todoContext) : base(todoContext)
+        {
+
+        }
     }
 }

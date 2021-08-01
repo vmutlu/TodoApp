@@ -9,6 +9,16 @@ namespace ToDo.DataAccess.Concrete
 {
     public class TodoContext : DbContext
     {
+        public TodoContext(DbContextOptions<TodoContext> options) : base(options)
+        {
+
+        }
+
+        public TodoContext()
+        {
+
+        }
+
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             var Configuration = new ConfigurationBuilder().SetBasePath(Directory.GetCurrentDirectory()).AddJsonFile("appsettings.json").Build();

@@ -6,5 +6,9 @@ namespace ToDo.DataAccess.Concrete.EntityFramework
 {
     public class EfCategoryDal : EfEntityRepositoryBase<Category, TodoContext>, ICategoryDal
     {
+        public EfCategoryDal(TodoContext todoContext) : base(todoContext)
+        {
+
+        }
     }
 }

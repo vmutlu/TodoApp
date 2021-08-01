@@ -30,7 +30,7 @@ namespace ToDo.Core.Extensions
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
 
-            string message = "Internal Server Error";
+            string message = exception.Message;
             IEnumerable<ValidationFailure> errors;
             if (exception.GetType() == typeof(ValidationException))
             {
