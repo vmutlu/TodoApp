@@ -19,10 +19,21 @@ namespace ToDo.Core.Utilities.Results
             Data = data;
         }
 
+        public DataResult(T data, bool success, string message,HttpStatusCode statusCode) : base(success, message,statusCode)
+        {
+            Data = data;
+        }
+
         public DataResult(T data, bool success) : base(success)
         {
             Data = data;
         }
+
+        public DataResult(T data, bool success,HttpStatusCode statusCode) : base(success,statusCode)
+        {
+            Data = data;
+        }
+
         public DataResult(T data, HttpStatusCode statusCode, int totalRecords, string message) : base(statusCode, message)
         {
             Data = data;

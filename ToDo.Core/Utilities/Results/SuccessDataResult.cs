@@ -1,4 +1,6 @@
-﻿namespace ToDo.Core.Utilities.Results
+﻿using System.Net;
+
+namespace ToDo.Core.Utilities.Results
 {
     public class SuccessDataResult<T> : DataResult<T>
     {
@@ -8,6 +10,11 @@
         }
 
         public SuccessDataResult(T data) : base(data, true)
+        {
+
+        }
+
+        public SuccessDataResult(T data, HttpStatusCode statusCode) : base(data, true,statusCode)
         {
 
         }
