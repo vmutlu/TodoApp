@@ -41,7 +41,7 @@ namespace ToDo.Business.Concrete
         public async Task<IDataResult<List<OperationClaim>>> GetAllAsync()
         {
             var users = await _userService.GetUsersAsync().ConfigureAwait(false);
-            var response = (from oc in await _operationClaimDal.GetAllAsync(null, o => o.UserOperationClaims).ConfigureAwait(false)
+            var response = (from oc in await _operationClaimDal.GetAllAsync(null, null, o => o.UserOperationClaims).ConfigureAwait(false)
                             from u in oc.UserOperationClaims
                             from us in users
                             where u.UserId == us.Id
@@ -49,20 +49,18 @@ namespace ToDo.Business.Concrete
                             {
                                 Id = oc.Id,
                                 Name = oc.Name,
-                                UserOperationClaims = oc.UserOperationClaims != null ? (new List<UserOperationClaim>()
+                                UserOperationClaims = oc.UserOperationClaims != null ? (from uoc in oc.UserOperationClaims
+                                                                                        select new UserOperationClaim()
                                                                                         {
-                                                                                            new UserOperationClaim()
+                                                                                            User = new User()
                                                                                             {
-                                                                                                User = new User()
-                                                                                                 {
-                                                                                                     Id = us.Id,
-                                                                                                     FirstName = us.FirstName,
-                                                                                                     LastName = us.LastName,
-                                                                                                     Email = us.Email,
-                                                                                                     Status = us.Status
-                                                                                                 }
+                                                                                                Id = us.Id,
+                                                                                                FirstName = us.FirstName,
+                                                                                                LastName = us.LastName,
+                                                                                                Email = us.Email,
+                                                                                                Status = us.Status
                                                                                             }
-                                                                                        }) : null
+                                                                                        }).ToList() : null
                             }).ToList();
 
             return new SuccessDataResult<List<OperationClaim>>(response);

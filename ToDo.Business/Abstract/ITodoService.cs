@@ -8,7 +8,7 @@ namespace ToDo.Business.Abstract
 {
     public interface ITodoService
     {
-        Task<IDataResult<List<Todo>>> GetAllAsync();
+        Task<IDataResult<PaginationDataResult<Todo>>> GetAllAsync(PaginationQuery paginationQuery = null);
         Task<IDataResult<Todo>> GetByIdAsync(int todoId);
         Task<IResult> AddAsync(Todo tEntity);
         Task<IResult> UpdateAsync(Todo tEntity);

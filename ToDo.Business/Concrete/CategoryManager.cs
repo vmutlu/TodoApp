@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
@@ -8,7 +10,9 @@ using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
 using ToDo.Core.Aspects.Autofac.Transaction;
 using ToDo.Core.Aspects.Autofac.Validation;
+using ToDo.Core.Extensions;
 using ToDo.Core.Extensions.MapHelper;
+using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 using ToDo.Entities.Concrate;
@@ -18,7 +22,8 @@ namespace ToDo.Business.Concrete
     public class CategoryManager : ICategoryService
     {
         private readonly ICategoryDal _categoryDal;
-        public CategoryManager(ICategoryDal categoryDal) => _categoryDal = categoryDal;
+        private readonly IPaginationUriService _uriService;
+        public CategoryManager(ICategoryDal categoryDal, IPaginationUriService uriService) { _categoryDal = categoryDal; _uriService = uriService; }
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ICategoryService.Get")]
@@ -42,27 +47,31 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin,user")]
         [CacheAspect]
-        public async Task<IDataResult<List<Category>>> GetAllAsync()
+        public async Task<IDataResult<PaginationDataResult<Category>>> GetAllAsync(PaginationQuery paginationQuery = null)
         {
-            var response = (from category in await _categoryDal.GetAllAsync(null, c => c.Todos).ConfigureAwait(false)
+            var response = (from category in await _categoryDal.GetAllAsync(null, paginationQuery, c => c.Todos).ConfigureAwait(false)
                             select new Category()
                             {
                                 CategoryId = category.CategoryId,
                                 Name = category.Name,
-                                Todos = category.Todos != null ? new List<Todo>()
-                                  {
-                                      new Todo()
-                                      {
-                                         CategoryId = category.Todos.GetListMapped(ct=>ct.CategoryId),
-                                         Content = category.Todos.GetListMapped(ct=>ct.Content),
-                                         DueDate = category.Todos.GetListMapped(ct=>ct.DueDate),
-                                         Id = category.Todos.GetListMapped(ct=>ct.Id),
-                                         IsFavorite = category.Todos.GetListMapped(ct=>ct.IsFavorite),
-                                         ReminMeDate = category.Todos.GetListMapped(ct=>ct.ReminMeDate),
-                                      }
-                                  } : null
+                                Todos = category.Todos != null ? (from ct in category.Todos
+                                                                  select new Todo()
+                                                                  {
+                                                                      CategoryId = ct.CategoryId,
+                                                                      Content = ct.Content,
+                                                                      DueDate = ct.DueDate,
+                                                                      Id = ct.Id,
+                                                                      IsFavorite = ct.IsFavorite,
+                                                                      ReminMeDate = ct.ReminMeDate
+                                                                  }).ToList() : null
                             });
-            return new SuccessDataResult<List<Category>>(response.ToList());
+
+            var list = await response.ToListAsync();
+            var count = await response.CountAsync();
+
+            var responsePagination = PaginationExtensions.CreatePaginationResult(list, HttpStatusCode.OK, paginationQuery, count, _uriService);
+
+            return new SuccessDataResult<PaginationDataResult<Category>>(responsePagination);
         }
 
         [SecuredOperation("admin,user")]

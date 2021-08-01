@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
@@ -7,6 +9,8 @@ using ToDo.Business.Constants;
 using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
 using ToDo.Core.Aspects.Autofac.Validation;
+using ToDo.Core.Extensions;
+using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 using ToDo.Entities.Concrate;
@@ -16,7 +20,8 @@ namespace ToDo.Business.Concrete
     public class TodoManager : ITodoService
     {
         private readonly ITodoDal _todoDal;
-        public TodoManager(ITodoDal todoDal) => _todoDal = todoDal;
+        private readonly IPaginationUriService _uriService;
+        public TodoManager(ITodoDal todoDal, IPaginationUriService uriService) { _todoDal = todoDal; _uriService = uriService; }
 
         [SecuredOperation("admin")]
         [CacheRemoveAspect("ITodoService.Get")]
@@ -40,9 +45,9 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin,user")]
         [CacheAspect]
-        public async Task<IDataResult<List<Todo>>> GetAllAsync()
+        public async Task<IDataResult<PaginationDataResult<Todo>>> GetAllAsync(PaginationQuery paginationQuery = null)
         {
-            var response = (from todo in await _todoDal.GetAllAsync(null, p => p.Category).ConfigureAwait(false)
+            var response = (from todo in await _todoDal.GetAllAsync(null, paginationQuery, p => p.Category).ConfigureAwait(false)
                             select new Todo()
                             {
                                 CategoryId = todo.CategoryId,
@@ -56,8 +61,14 @@ namespace ToDo.Business.Concrete
                                     CategoryId = todo.Category.CategoryId,
                                     Name = todo.Category.Name
                                 } : null
-                            }).ToList();
-            return new SuccessDataResult<List<Todo>>(response);
+                            });
+
+            var list = await response.ToListAsync();
+            var count = await response.CountAsync();
+
+            var responsePagination = PaginationExtensions.CreatePaginationResult(list, HttpStatusCode.OK, paginationQuery, count, _uriService);
+
+            return new SuccessDataResult<PaginationDataResult<Todo>>(responsePagination);
         }
 
         [SecuredOperation("admin,user")]

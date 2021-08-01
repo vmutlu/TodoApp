@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Core.Entities.Concrete;
 using ToDo.DataAccess.Abstract;
-using System.Linq;
-using ToDo.Core.Extensions.MapHelper;
 
 namespace ToDo.Business.Concrete
 {
@@ -22,7 +21,7 @@ namespace ToDo.Business.Concrete
 
         public async Task<List<User>> GetUsersAsync()
         {
-            var users = (from uop in await _userDal.GetAllAsync(null, u => u.UserOperationClaims).ConfigureAwait(false)
+            var users = (from uop in await _userDal.GetAllAsync(null, null, u => u.UserOperationClaims).ConfigureAwait(false)
                          from uoc in uop.UserOperationClaims
                          where uoc.UserId == uop.Id
                          select new User()
@@ -32,14 +31,12 @@ namespace ToDo.Business.Concrete
                              LastName = uop.LastName,
                              Email = uop.Email,
                              Status = uop.Status,
-                             UserOperationClaims = uop.UserOperationClaims != null ? new List<UserOperationClaim>()
+                             UserOperationClaims = uop.UserOperationClaims != null ? (from uoc in uop.UserOperationClaims
+                                                                                      select new UserOperationClaim()
                                                                                       {
-                                                                                           new UserOperationClaim()
-                                                                                            {
-                                                                                                Id = uop.UserOperationClaims.GetListMapped(i=>i.Id),
-                                                                                                UserId = uop.UserOperationClaims.GetListMapped(i=>i.UserId)
-                                                                                            }
-                                                                                      } : null
+                                                                                          Id = uoc.Id,
+                                                                                          UserId = uoc.UserId
+                                                                                      }).ToList() : null
                          }).ToList();
 
             return users;

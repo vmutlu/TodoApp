@@ -36,7 +36,7 @@ namespace ToDo.Business.Concrete
         [SecuredOperation("admin")]
         public async Task<IDataResult<List<UserOperationClaim>>> GetAllAsync()
         {
-            var response = (from uoc in await _userOperationClaimDal.GetAllAsync(null, o => o.User, o => o.OperationClaim).ConfigureAwait(false)
+            var response = (from uoc in await _userOperationClaimDal.GetAllAsync(null, null, o => o.User, o => o.OperationClaim).ConfigureAwait(false)
                             select new UserOperationClaim()
                             {
                                 Id = uoc.Id,
