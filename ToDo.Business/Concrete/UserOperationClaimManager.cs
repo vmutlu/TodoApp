@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Business.Constants;
 using ToDo.Core.Entities.Concrete;
+using ToDo.Core.Extensions;
+using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 
@@ -13,8 +17,9 @@ namespace ToDo.Business.Concrete
     public class UserOperationClaimManager : IUserOperationClaimService
     {
         private readonly IUserOperationClaimDal _userOperationClaimDal;
+        private readonly IPaginationUriService _uriService;
 
-        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal) => _userOperationClaimDal = userOperationClaimDal;
+        public UserOperationClaimManager(IUserOperationClaimDal userOperationClaimDal, IPaginationUriService uriService) { _userOperationClaimDal = userOperationClaimDal;  _uriService = uriService; }
 
         public async Task<IResult> AddAsync(UserOperationClaim operation)
         {
@@ -34,9 +39,9 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin")]
-        public async Task<IDataResult<List<UserOperationClaim>>> GetAllAsync()
+        public async Task<IDataResult<PaginationDataResult<UserOperationClaim>>> GetAllAsync(PaginationQuery paginationQuery = null)
         {
-            var response = (from uoc in await _userOperationClaimDal.GetAllAsync(null, null, o => o.User, o => o.OperationClaim).ConfigureAwait(false)
+            var response = (from uoc in await _userOperationClaimDal.GetAllAsync(null, paginationQuery, o => o.User, o => o.OperationClaim).ConfigureAwait(false)
                             select new UserOperationClaim()
                             {
                                 Id = uoc.Id,
@@ -53,9 +58,14 @@ namespace ToDo.Business.Concrete
                                 {
                                     Name = uoc.OperationClaim.Name
                                 } : null
-                            }).ToList();
+                            });
 
-            return new SuccessDataResult<List<UserOperationClaim>>(response);
+            var list = await response.ToListAsync();
+            var count = await response.CountAsync();
+
+            var responsePagination = response.CreatePaginationResult(HttpStatusCode.OK, paginationQuery, count, _uriService);
+
+            return new SuccessDataResult<PaginationDataResult<UserOperationClaim>>(responsePagination);
         }
 
         [SecuredOperation("admin")]

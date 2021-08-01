@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -46,7 +47,7 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin,user")]
-        [CacheAspect]
+       // [CacheAspect]
         public async Task<IDataResult<PaginationDataResult<Category>>> GetAllAsync(PaginationQuery paginationQuery = null)
         {
             var response = (from category in await _categoryDal.GetAllAsync(null, paginationQuery, c => c.Todos).ConfigureAwait(false)
@@ -66,12 +67,14 @@ namespace ToDo.Business.Concrete
                                                                   }).ToList() : null
                             });
 
+            if (response is null)
+                return new ErrorDataResult<PaginationDataResult<Category>>(HttpStatusCode.NotFound, "NotFound");
+
             var list = await response.ToListAsync();
             var count = await response.CountAsync();
 
-            var responsePagination = PaginationExtensions.CreatePaginationResult(list, HttpStatusCode.OK, paginationQuery, count, _uriService);
-
-            return new SuccessDataResult<PaginationDataResult<Category>>(responsePagination);
+            var responsePagination = response.CreatePaginationResult(HttpStatusCode.OK, paginationQuery, count, _uriService);
+            return new SuccessDataResult<PaginationDataResult<Category>>(responsePagination, (HttpStatusCode)responsePagination.StatusCode);
         }
 
         [SecuredOperation("admin,user")]

@@ -36,9 +36,17 @@ namespace ToDo.API.Extensions
                     {
                         return new OkObjectResult(result);
                     }
+                case 0:
+                    {
+                        if (result.Success)
+                            return new OkObjectResult(result);
+
+                        else
+                            return new BadRequestObjectResult(result);
+                    }
                 default:
                     {
-                        return new OkObjectResult(result);
+                        return new BadRequestObjectResult(result);
                     }
             }
         }

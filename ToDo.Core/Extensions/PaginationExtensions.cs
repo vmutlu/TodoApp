@@ -1,5 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
@@ -8,7 +8,7 @@ namespace ToDo.Core.Extensions
 {
     public static class PaginationExtensions
     {
-        public static PaginationDataResult<T> CreatePaginationResult<T>(this IReadOnlyList<T> pagedData, HttpStatusCode statusCode, PaginationQuery paginationQuery, int totalRecords, IPaginationUriService uriService)
+        public static PaginationDataResult<T> CreatePaginationResult<T>(this IQueryable<T> pagedData, HttpStatusCode statusCode, PaginationQuery paginationQuery, int totalRecords, IPaginationUriService uriService)
         {
             var result = new PaginationDataResult<T>(pagedData, statusCode, paginationQuery.PageNumber, paginationQuery.PageSize);
             var totalPages = Convert.ToInt32(Math.Ceiling((double)totalRecords / (double)paginationQuery.PageSize));

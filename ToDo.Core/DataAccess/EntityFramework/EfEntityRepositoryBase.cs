@@ -48,7 +48,7 @@ namespace ToDo.Core.DataAccess.EntityFramework
                 query = query.Skip(skip).Take(paginationQuery.PageSize);
             }
 
-            return query;
+            return  query;
         }
 
         public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter, params Expression<Func<TEntity, object>>[] includeEntities)

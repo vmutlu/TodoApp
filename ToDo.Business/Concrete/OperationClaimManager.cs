@@ -1,11 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.EntityFrameworkCore;
+using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Business.Constants;
 using ToDo.Core.Entities.Concrete;
+using ToDo.Core.Extensions;
 using ToDo.Core.Extensions.MapHelper;
+using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
 using ToDo.DataAccess.Abstract;
 
@@ -15,11 +19,13 @@ namespace ToDo.Business.Concrete
     {
         private readonly IOperationClaimDal _operationClaimDal;
         private readonly IUserService _userService;
+        private readonly IPaginationUriService _uriService;
 
-        public OperationClaimManager(IOperationClaimDal operationClaimDal, IUserService userService)
+        public OperationClaimManager(IOperationClaimDal operationClaimDal, IUserService userService, IPaginationUriService uriService)
         {
             _operationClaimDal = operationClaimDal;
             _userService = userService;
+            _uriService = uriService;
         }
 
         [SecuredOperation("admin,user")]
@@ -38,10 +44,10 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin,user")]
-        public async Task<IDataResult<List<OperationClaim>>> GetAllAsync()
+        public async Task<IDataResult<PaginationDataResult<OperationClaim>>> GetAllAsync(PaginationQuery paginationQuery=null)
         {
             var users = await _userService.GetUsersAsync().ConfigureAwait(false);
-            var response = (from oc in await _operationClaimDal.GetAllAsync(null, null, o => o.UserOperationClaims).ConfigureAwait(false)
+            var response = (from oc in await _operationClaimDal.GetAllAsync(null, paginationQuery, o => o.UserOperationClaims).ConfigureAwait(false)
                             from u in oc.UserOperationClaims
                             from us in users
                             where u.UserId == us.Id
@@ -61,9 +67,14 @@ namespace ToDo.Business.Concrete
                                                                                                 Status = us.Status
                                                                                             }
                                                                                         }).ToList() : null
-                            }).ToList();
+                            });
 
-            return new SuccessDataResult<List<OperationClaim>>(response);
+            var list = await response.ToListAsync();
+            var count = await response.CountAsync();
+
+            var responsePagination = response.CreatePaginationResult(HttpStatusCode.OK, paginationQuery, count, _uriService);
+
+            return new SuccessDataResult<PaginationDataResult<OperationClaim>>(responsePagination);
         }
 
         [SecuredOperation("admin,user")]

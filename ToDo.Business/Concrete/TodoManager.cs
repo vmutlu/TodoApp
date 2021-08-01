@@ -66,7 +66,7 @@ namespace ToDo.Business.Concrete
             var list = await response.ToListAsync();
             var count = await response.CountAsync();
 
-            var responsePagination = PaginationExtensions.CreatePaginationResult(list, HttpStatusCode.OK, paginationQuery, count, _uriService);
+            var responsePagination = response.CreatePaginationResult( HttpStatusCode.OK, paginationQuery, count, _uriService);
 
             return new SuccessDataResult<PaginationDataResult<Todo>>(responsePagination);
         }
