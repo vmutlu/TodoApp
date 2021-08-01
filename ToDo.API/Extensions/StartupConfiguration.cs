@@ -31,6 +31,7 @@ namespace ToDo.API.Extensions
                 return new PaginationUriService(httpContextAccessor);
             });
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             services.AddControllers().AddNewtonsoftJson();
 
 
