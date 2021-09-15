@@ -28,7 +28,7 @@ namespace Api.Controllers
         [ProducesResponseType(typeof(ErrorResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(IResult), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(IResult), (int)HttpStatusCode.Unauthorized)]
-        public virtual async Task<IActionResult> GetAll([FromQuery] GeneralFilter generalFilter)
+        public virtual async Task<IActionResult> GetAll(GeneralFilter generalFilter)
         {
             var result = await service?.GetAllAsync(generalFilter);
             return this.GetResult(result);

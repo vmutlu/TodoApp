@@ -67,9 +67,9 @@ namespace ToDo.Core.DataAccess.EntityFramework
                 list = asc ? list.AscOrDescOrder(ESort.Asc, propertyName) : list.AscOrDescOrder(ESort.Desc, propertyName);
                 int totalCount = list.Count();
                 var start = (page - 1) * 10;
-                list = list.Skip(start).Take(15);
+                list = list.Skip(start).Take(10);
 
-                return new PagingResult<TEntity>(await list.ToListAsync(), totalCount, true, "");
+                return new PagingResult<TEntity>(await list.ToListAsync(), totalCount, true, $"{totalCount} adet kayıt listelendi.");
             }
         }
 

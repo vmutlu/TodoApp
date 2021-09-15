@@ -47,9 +47,9 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: "Kategori Başarıyla Silinmiştir.");
         }
 
-        [SecuredOperation("admin,user")]
-       // [CacheAspect]
-        public async Task<IDataResult<List<Category>>> GetAllAsync(GeneralFilter generalFilter = null)
+        //  [SecuredOperation("admin,user")]
+        // [CacheAspect]
+        public async Task<PagingResult<Category>> GetAllAsync(GeneralFilter generalFilter = null)
         {
             var query = await _categoryDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, c => c.Todos).ConfigureAwait(false);
             var response = (from category in query.Data
@@ -69,10 +69,10 @@ namespace ToDo.Business.Concrete
                                                                   }).ToList() : null
                             }).ToList();
 
-            if (response is null)
-                return new ErrorDataResult<List<Category>>(HttpStatusCode.NotFound, "NotFound");
+            //if (response is null)
+            //    return new ErrorDataResult<List<Category>>(HttpStatusCode.NotFound, "NotFound");
 
-            return new SuccessDataResult<List<Category>>(response);
+            return new PagingResult<Category>(response, query.TotalItemCount, query.Success, query.Message);
         }
 
         [SecuredOperation("admin,user")]

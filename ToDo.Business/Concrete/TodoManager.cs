@@ -46,7 +46,7 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin,user")]
         [CacheAspect]
-        public async Task<IDataResult<List<Todo>>> GetAllAsync(GeneralFilter generalFilter = null)
+        public async Task<PagingResult<Todo>> GetAllAsync(GeneralFilter generalFilter = null)
         {
             var query = await _todoDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, c => c.Category).ConfigureAwait(false);
 
@@ -66,7 +66,7 @@ namespace ToDo.Business.Concrete
                                 } : null
                             }).ToList();
 
-            return new SuccessDataResult<List<Todo>>(response);
+            return new PagingResult<Todo>(response, query.TotalItemCount, query.Success, query.Message);
         }
 
         [SecuredOperation("admin,user")]

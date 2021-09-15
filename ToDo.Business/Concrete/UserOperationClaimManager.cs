@@ -40,7 +40,7 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin")]
-        public async Task<IDataResult<List<UserOperationClaim>>> GetAllAsync(GeneralFilter generalFilter = null)
+        public async Task<PagingResult<UserOperationClaim>> GetAllAsync(GeneralFilter generalFilter = null)
         {
             var query = await _userOperationClaimDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, o => o.User, o => o.OperationClaim).ConfigureAwait(false);
 
@@ -63,7 +63,7 @@ namespace ToDo.Business.Concrete
                                 } : null
                             }).ToList();
 
-            return new SuccessDataResult<List<UserOperationClaim>>(response);
+            return new PagingResult<UserOperationClaim>(response, query.TotalItemCount, query.Success, query.Message);
         }
 
         [SecuredOperation("admin")]
