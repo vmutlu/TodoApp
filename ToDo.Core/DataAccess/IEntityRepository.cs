@@ -10,6 +10,7 @@ namespace ToDo.Core.DataAccess
     public interface IEntityRepository<T> where T : class, IEntity, new()
     {
         Task<IQueryable<T>> GetAllAsync(Expression<Func<T, bool>> filter = null, PaginationQuery paginationQuery = null, params Expression<Func<T, object>>[] includeEntities);
+        Task<PagingResult<T>> GetAllForPagingAsync(int page, string propertyName, bool asc, Expression<Func<T, bool>> filter = null, params Expression<Func<T, object>>[] includeEntities);
         Task<T> GetAsync(Expression<Func<T, bool>> filter, params Expression<Func<T, object>>[] includeEntities);
         Task AddAsync(T entity);
         Task UpdateAsync(T entity);
