@@ -28,10 +28,9 @@ namespace Api.Controllers
         [ProducesResponseType(typeof(ErrorResult), (int)HttpStatusCode.BadRequest)]
         [ProducesResponseType(typeof(IResult), (int)HttpStatusCode.Forbidden)]
         [ProducesResponseType(typeof(IResult), (int)HttpStatusCode.Unauthorized)]
-        public virtual async Task<IActionResult> GetAll([FromQuery] PaginationQuery paginationQuery)
+        public virtual async Task<IActionResult> GetAll([FromQuery] GeneralFilter generalFilter)
         {
-            var pagination = new PaginationQuery(paginationQuery.PageNumber, paginationQuery.PageSize);
-            var result = await service?.GetAllAsync(pagination);
+            var result = await service?.GetAllAsync(generalFilter);
             return this.GetResult(result);
         }
 
