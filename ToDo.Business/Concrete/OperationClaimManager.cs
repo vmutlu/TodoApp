@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Business.Constants;
+using ToDo.Core.Entities;
 using ToDo.Core.Entities.Concrete;
 using ToDo.Core.Extensions;
 using ToDo.Core.Extensions.MapHelper;
@@ -44,10 +45,12 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin,user")]
-        public async Task<IDataResult<PaginationDataResult<OperationClaim>>> GetAllAsync(PaginationQuery paginationQuery=null)
+        public async Task<IDataResult<List<OperationClaim>>> GetAllAsync(GeneralFilter generalFilter = null)
         {
+            var query = await _operationClaimDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, o => o.UserOperationClaims).ConfigureAwait(false);
+
             var users = await _userService.GetUsersAsync().ConfigureAwait(false);
-            var response = (from oc in await _operationClaimDal.GetAllAsync(null, paginationQuery, o => o.UserOperationClaims).ConfigureAwait(false)
+            var response = (from oc in  query.Data
                             from u in oc.UserOperationClaims
                             from us in users
                             where u.UserId == us.Id
@@ -67,14 +70,9 @@ namespace ToDo.Business.Concrete
                                                                                                 Status = us.Status
                                                                                             }
                                                                                         }).ToList() : null
-                            });
+                            }).ToList();
 
-            var list = await response.ToListAsync();
-            var count = await response.CountAsync();
-
-            var responsePagination = response.CreatePaginationResult(HttpStatusCode.OK, paginationQuery, count, _uriService);
-
-            return new SuccessDataResult<PaginationDataResult<OperationClaim>>(responsePagination);
+            return new SuccessDataResult<List<OperationClaim>>(response);
         }
 
         [SecuredOperation("admin,user")]

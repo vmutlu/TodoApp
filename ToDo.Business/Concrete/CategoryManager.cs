@@ -11,6 +11,7 @@ using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
 using ToDo.Core.Aspects.Autofac.Transaction;
 using ToDo.Core.Aspects.Autofac.Validation;
+using ToDo.Core.Entities;
 using ToDo.Core.Extensions;
 using ToDo.Core.Extensions.MapHelper;
 using ToDo.Core.Services.Abstract;
@@ -48,9 +49,10 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin,user")]
        // [CacheAspect]
-        public async Task<IDataResult<PaginationDataResult<Category>>> GetAllAsync(PaginationQuery paginationQuery = null)
+        public async Task<IDataResult<List<Category>>> GetAllAsync(GeneralFilter generalFilter = null)
         {
-            var response = (from category in await _categoryDal.GetAllAsync(null, paginationQuery, c => c.Todos).ConfigureAwait(false)
+            var query = await _categoryDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, c => c.Todos).ConfigureAwait(false);
+            var response = (from category in query.Data
                             select new Category()
                             {
                                 CategoryId = category.CategoryId,
@@ -65,16 +67,12 @@ namespace ToDo.Business.Concrete
                                                                       IsFavorite = ct.IsFavorite,
                                                                       ReminMeDate = ct.ReminMeDate
                                                                   }).ToList() : null
-                            });
+                            }).ToList();
 
             if (response is null)
-                return new ErrorDataResult<PaginationDataResult<Category>>(HttpStatusCode.NotFound, "NotFound");
+                return new ErrorDataResult<List<Category>>(HttpStatusCode.NotFound, "NotFound");
 
-            var list = await response.ToListAsync();
-            var count = await response.CountAsync();
-
-            var responsePagination = response.CreatePaginationResult(HttpStatusCode.OK, paginationQuery, count, _uriService);
-            return new SuccessDataResult<PaginationDataResult<Category>>(responsePagination, (HttpStatusCode)responsePagination.StatusCode);
+            return new SuccessDataResult<List<Category>>(response);
         }
 
         [SecuredOperation("admin,user")]

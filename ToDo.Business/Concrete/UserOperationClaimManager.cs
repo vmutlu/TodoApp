@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
 using ToDo.Business.Constants;
+using ToDo.Core.Entities;
 using ToDo.Core.Entities.Concrete;
 using ToDo.Core.Extensions;
 using ToDo.Core.Services.Abstract;
@@ -39,9 +40,11 @@ namespace ToDo.Business.Concrete
         }
 
         [SecuredOperation("admin")]
-        public async Task<IDataResult<PaginationDataResult<UserOperationClaim>>> GetAllAsync(PaginationQuery paginationQuery = null)
+        public async Task<IDataResult<List<UserOperationClaim>>> GetAllAsync(GeneralFilter generalFilter = null)
         {
-            var response = (from uoc in await _userOperationClaimDal.GetAllAsync(null, paginationQuery, o => o.User, o => o.OperationClaim).ConfigureAwait(false)
+            var query = await _userOperationClaimDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, o => o.User, o => o.OperationClaim).ConfigureAwait(false);
+
+            var response = (from uoc in query.Data
                             select new UserOperationClaim()
                             {
                                 Id = uoc.Id,
@@ -58,14 +61,9 @@ namespace ToDo.Business.Concrete
                                 {
                                     Name = uoc.OperationClaim.Name
                                 } : null
-                            });
+                            }).ToList();
 
-            var list = await response.ToListAsync();
-            var count = await response.CountAsync();
-
-            var responsePagination = response.CreatePaginationResult(HttpStatusCode.OK, paginationQuery, count, _uriService);
-
-            return new SuccessDataResult<PaginationDataResult<UserOperationClaim>>(responsePagination);
+            return new SuccessDataResult<List<UserOperationClaim>>(response);
         }
 
         [SecuredOperation("admin")]

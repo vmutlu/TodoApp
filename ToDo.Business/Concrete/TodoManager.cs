@@ -9,6 +9,7 @@ using ToDo.Business.Constants;
 using ToDo.Business.ValidationRules.FluentValidation;
 using ToDo.Core.Aspects.Autofac.Caching;
 using ToDo.Core.Aspects.Autofac.Validation;
+using ToDo.Core.Entities;
 using ToDo.Core.Extensions;
 using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
@@ -45,9 +46,11 @@ namespace ToDo.Business.Concrete
 
         [SecuredOperation("admin,user")]
         [CacheAspect]
-        public async Task<IDataResult<PaginationDataResult<Todo>>> GetAllAsync(PaginationQuery paginationQuery = null)
+        public async Task<IDataResult<List<Todo>>> GetAllAsync(GeneralFilter generalFilter = null)
         {
-            var response = (from todo in await _todoDal.GetAllAsync(null, paginationQuery, p => p.Category).ConfigureAwait(false)
+            var query = await _todoDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, c => c.Category).ConfigureAwait(false);
+
+            var response = (from todo in query.Data
                             select new Todo()
                             {
                                 CategoryId = todo.CategoryId,
@@ -61,14 +64,9 @@ namespace ToDo.Business.Concrete
                                     CategoryId = todo.Category.CategoryId,
                                     Name = todo.Category.Name
                                 } : null
-                            });
+                            }).ToList();
 
-            var list = await response.ToListAsync();
-            var count = await response.CountAsync();
-
-            var responsePagination = response.CreatePaginationResult( HttpStatusCode.OK, paginationQuery, count, _uriService);
-
-            return new SuccessDataResult<PaginationDataResult<Todo>>(responsePagination);
+            return new SuccessDataResult<List<Todo>>(response);
         }
 
         [SecuredOperation("admin,user")]
