@@ -1,8 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net;
 using System.Threading.Tasks;
 using ToDo.Business.Abstract;
 using ToDo.Business.BusinessAspects.Autofac;
@@ -12,7 +9,6 @@ using ToDo.Core.Aspects.Autofac.Caching;
 using ToDo.Core.Aspects.Autofac.Transaction;
 using ToDo.Core.Aspects.Autofac.Validation;
 using ToDo.Core.Entities;
-using ToDo.Core.Extensions;
 using ToDo.Core.Extensions.MapHelper;
 using ToDo.Core.Services.Abstract;
 using ToDo.Core.Utilities.Results;
@@ -47,8 +43,8 @@ namespace ToDo.Business.Concrete
             return new Result(success: true, message: "Kategori Başarıyla Silinmiştir.");
         }
 
-        //  [SecuredOperation("admin,user")]
-        // [CacheAspect]
+        [SecuredOperation("admin,user")]
+        [CacheAspect]
         public async Task<PagingResult<Category>> GetAllAsync(GeneralFilter generalFilter = null)
         {
             var query = await _categoryDal.GetAllForPagingAsync(generalFilter.Page, generalFilter.PropertyName, generalFilter.Asc, null, c => c.Todos).ConfigureAwait(false);
