@@ -5,7 +5,7 @@ using ToDo.Entities.DTOs;
 
 namespace ToDo.API.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("api/v1/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
     {
