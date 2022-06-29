@@ -45,9 +45,9 @@ namespace ToDo.API
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ToDo.API v1"));
             }
 
-            app.ConfigureCustomExceptionMiddleware();
+           // app.ConfigureCustomExceptionMiddleware();
 
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
 
             app.UseRouting();
 

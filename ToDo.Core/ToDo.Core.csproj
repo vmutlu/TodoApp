@@ -13,6 +13,7 @@
     <PackageReference Include="log4net" Version="2.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Http" Version="2.2.2" />
     <PackageReference Include="Microsoft.AspNetCore.Http.Abstractions" Version="2.2.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.AutoHistory" Version="3.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="3.1.12" />
     <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.8.0" />
